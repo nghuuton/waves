@@ -62,6 +62,22 @@ app.get("/api/product/article_by_id", async (req, res) => {
     return res.status(200).json({ product });
 });
 
+app.get("/api/product/articles", async (req, res) => {
+    let order = req.query.order ? req.query.order : "asc";
+    let sortBy = req.query.sortBy ? req.query.sortBy : "_id";
+    let limit = req.query.limit ? req.query.limit : 100;
+    try {
+        const products = await Product.find()
+            .populate("brand")
+            .populate("wood")
+            .sort([[sortBy, order]])
+            .limit(Number(limit));
+        return res.status(200).json({ products });
+    } catch (error) {
+        return res.status(400).send(error);
+    }
+});
+
 // Woods
 app.post("/api/product/wood", auth, admin, async (req, res) => {
     try {
