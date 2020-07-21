@@ -78,12 +78,18 @@ userSchema.methods.generateToken = async function (cb) {
 
 userSchema.statics.findByToken = async function (token, cb) {
     var user = this;
-    try {
-        const decode = await jwt.verify(token, process.env.SECRET);
-        const result = await user.findOne({ _id: decode, token: token });
-        if (result) return cb(null, result);
-    } catch (error) {
-        return cb(error);
+    if (!token) {
+        return cb(null);
+    } else {
+        try {
+            const decode = await jwt.verify(token, process.env.SECRET);
+            if (!decode) return cb(null);
+            const result = await user.findOne({ _id: decode, token: token });
+            if (result) return cb(null, result);
+            return cb(error, null);
+        } catch (error) {
+            return cb(error);
+        }
     }
     // jwt.verify(token, process.env.SECRET, function (err, decode) {
     //     user.findOne({ _id: decode, token: token }, function (err, user) {

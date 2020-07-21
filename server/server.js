@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
 
 const app = express();
 require("dotenv").config();
@@ -28,9 +28,53 @@ app.use(morgan("dev"));
 
 // Middleware
 const { auth } = require("./middleware/auth");
-
+const { admin } = require("./middleware/admin");
 // Models
 const User = require("./models/user");
+const Brand = require("./models/brand");
+const Wood = require("./models/wood");
+
+// Woods
+app.post("/api/product/wood", auth, admin, async (req, res) => {
+    try {
+        const wood = new Wood(req.body);
+        await wood.save();
+        return res.status(201).json({ success: true, wood });
+    } catch (error) {
+        return res.status(400).json({ success: false });
+    }
+});
+
+app.get("/api/product/woods", async (req, res) => {
+    try {
+        const woods = await Wood.find({});
+        return res.status(200).json({ woods });
+    } catch (error) {
+        return res.status(400).json({ error });
+    }
+});
+
+// Brand
+app.post("/api/product/brand", auth, admin, async (req, res) => {
+    try {
+        const brand = new Brand(req.body);
+        await brand.save();
+        return res.status(201).json({ success: true, brand });
+    } catch (error) {
+        return res.status(404).json({ success: fase, error });
+    }
+});
+
+app.get("/api/product/brands", async (req, res) => {
+    try {
+        const brands = await Brand.find({});
+        return res.status(200).json({ brands });
+    } catch (error) {
+        return res.status(400).json({ error });
+    }
+});
+
+// User
 
 app.get("/api/user/auth", auth, (req, res) => {
     res.status(200).json({
