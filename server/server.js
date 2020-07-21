@@ -33,6 +33,18 @@ const { admin } = require("./middleware/admin");
 const User = require("./models/user");
 const Brand = require("./models/brand");
 const Wood = require("./models/wood");
+const Product = require("./models/product");
+
+// Product
+app.post("/api/product/article", auth, admin, async (req, res) => {
+    try {
+        const product = new Product(req.body);
+        await product.save();
+        return res.status(201).json({ success: true, product });
+    } catch (error) {
+        return res.status(400).json({ success: false });
+    }
+});
 
 // Woods
 app.post("/api/product/wood", auth, admin, async (req, res) => {
