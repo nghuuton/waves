@@ -144,20 +144,14 @@ class Register extends Component {
                                         <FormField
                                             id={"name"}
                                             formdata={this.state.formdata.name}
-                                            change={(element) =>
-                                                this.updateForm(element)
-                                            }
+                                            change={(element) => this.updateForm(element)}
                                         />
                                     </div>
                                     <div className="block">
                                         <FormField
                                             id={"lastname"}
-                                            formdata={
-                                                this.state.formdata.lastname
-                                            }
-                                            change={(element) =>
-                                                this.updateForm(element)
-                                            }
+                                            formdata={this.state.formdata.lastname}
+                                            change={(element) => this.updateForm(element)}
                                         />
                                     </div>
                                 </div>
@@ -165,9 +159,7 @@ class Register extends Component {
                                     <FormField
                                         id={"email"}
                                         formdata={this.state.formdata.email}
-                                        change={(element) =>
-                                            this.updateForm(element)
-                                        }
+                                        change={(element) => this.updateForm(element)}
                                     />
                                 </div>
                                 <h2>Verify password</h2>
@@ -175,35 +167,22 @@ class Register extends Component {
                                     <div className="block">
                                         <FormField
                                             id={"password"}
-                                            formdata={
-                                                this.state.formdata.password
-                                            }
-                                            change={(element) =>
-                                                this.updateForm(element)
-                                            }
+                                            formdata={this.state.formdata.password}
+                                            change={(element) => this.updateForm(element)}
                                         />
                                     </div>
                                     <div className="block">
                                         <FormField
                                             id={"confirmPassword"}
-                                            formdata={
-                                                this.state.formdata
-                                                    .confirmPassword
-                                            }
-                                            change={(element) =>
-                                                this.updateForm(element)
-                                            }
+                                            formdata={this.state.formdata.confirmPassword}
+                                            change={(element) => this.updateForm(element)}
                                         />
                                     </div>
                                 </div>
                                 {this.state.formError ? (
-                                    <div className="error_label">
-                                        Please check your data
-                                    </div>
+                                    <div className="error_label">Please check your data</div>
                                 ) : null}
-                                <button
-                                    onClick={(event) => this.submitForm(event)}
-                                >
+                                <button onClick={(event) => this.submitForm(event)}>
                                     Create an account
                                 </button>
                             </form>
@@ -213,10 +192,7 @@ class Register extends Component {
                 <Dialog open={this.state.formSuccess}>
                     <div className="dialog_alert">
                         <div>Congratulations !!</div>
-                        <div>
-                            You will be redirected to the LOGIN in a couple
-                            seconds...
-                        </div>
+                        <div>You will be redirected to the LOGIN in a couple seconds...</div>
                     </div>
                 </Dialog>
             </div>
