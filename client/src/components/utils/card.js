@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import MyButton from "./button";
 
 class Card extends Component {
     renderCardImage = (image) => {
@@ -26,7 +27,23 @@ class Card extends Component {
                     </div>
                 </div>
                 {props.grid ? <div className="description">asdsad</div> : null}
-                <div></div>
+                <div className="actions">
+                    <div className="button_wrapp">
+                        <MyButton
+                            type="default"
+                            altClass="card_link"
+                            title="View product"
+                            linkTo={`/product-details/${props._id}`}
+                            addStyles={{ margin: "10px 0 0 0" }}
+                        />
+                    </div>
+                    <div className="button_wrapp">
+                        <MyButton
+                            type="tag_link"
+                            runAction={() => console.log("Add to cart")}
+                        />
+                    </div>
+                </div>
             </div>
         );
     }
