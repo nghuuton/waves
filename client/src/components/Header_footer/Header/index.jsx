@@ -47,7 +47,6 @@ class Header extends Component {
             }
         });
     };
-
     defaultLink = (item, i) =>
         item.name === "Log out" ? (
             <div className="log_out_link" key={i} onClick={() => this.logOuthandle()}>
