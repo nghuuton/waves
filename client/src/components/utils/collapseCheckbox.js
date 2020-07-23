@@ -25,7 +25,7 @@ class CollapseCheckbox extends Component {
     }
 
     handeleClick = () => {
-        console.log(this.state.open);
+        // console.log(this.state.open);
         this.setState({
             open: !this.state.open,
         });
@@ -40,7 +40,39 @@ class CollapseCheckbox extends Component {
     };
 
     renderList = () =>
-        this.props.list ? this.props.list.map((value) => <ListItem></ListItem>) : null;
+        this.props.list
+            ? this.props.list.map((value) => (
+                  <ListItem key={value._id} style={{ paddig: "10px 0" }}>
+                      <ListItemText primary={value.name} />
+                      <ListItemSecondaryAction>
+                          <Checkbox
+                              color="primary"
+                              onChange={() => this.handleToggle(value._id)}
+                              checked={this.state.checked.indexOf(value._id) !== -1}
+                          />
+                      </ListItemSecondaryAction>
+                  </ListItem>
+              ))
+            : null;
+
+    handleToggle = (value) => {
+        const { checked } = this.state;
+        const currentIndex = checked.indexOf(value);
+        const newChecked = [...checked];
+        if (currentIndex === -1) {
+            newChecked.push(value);
+        } else {
+            newChecked.splice(currentIndex, 1);
+        }
+        this.setState(
+            {
+                checked: newChecked,
+            },
+            () => {
+                this.props.handleFilters(newChecked);
+            }
+        );
+    };
 
     render() {
         return (
