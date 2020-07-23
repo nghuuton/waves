@@ -7,6 +7,7 @@ import { getBrands, getWoods, getProductsToShop } from "../../actions/products_a
 import CollapseCheckbox from "../utils/collapseCheckbox";
 import CollapseRadio from "../utils/collapseRadio";
 import { frets, prices } from "../utils/Form/fixed_categories";
+import LoadMoreCard from "./loadMoreCards";
 
 class Shop extends Component {
     state = {
@@ -92,7 +93,20 @@ class Shop extends Component {
                                 }
                             />
                         </div>
-                        <div className="right">R</div>
+                        <div className="right">
+                            <div className="shop_options">
+                                <div className="shop_grids clear">grids</div>
+                            </div>
+                            <div>
+                                <LoadMoreCard
+                                    grid={this.state.grid}
+                                    limit={this.state.limit}
+                                    size={products.toShopSize}
+                                    products={products.toShop}
+                                    loadMore={() => console.log("load more")}
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
