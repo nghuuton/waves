@@ -5,7 +5,7 @@ const LoadMoreCard = (props) => {
     return (
         <div>
             <div>
-                <CardBlockShop gird={props.grid} list={props.products} />
+                <CardBlockShop grid={props.grid} list={props.products} />
             </div>
             {props.size > 0 && props.size >= props.limit ? (
                 <div className="load_more_container">
