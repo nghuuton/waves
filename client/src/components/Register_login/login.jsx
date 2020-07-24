@@ -90,11 +90,9 @@ class Login extends Component {
                     />
 
                     {this.state.formError ? (
-                        <div className="error_label">
-                            Please check your data
-                        </div>
+                        <div className="error_label">Please check your data</div>
                     ) : null}
-                    <button onClick={(event) => this.submitForm(event)}>
+                    <button type="submit" onClick={(event) => this.submitForm(event)}>
                         Login
                     </button>
                 </form>

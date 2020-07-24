@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import UserLayout from "../../../HOC/user";
 
+import FileUpload from "../../utils/Form/fileUpload";
+
 import FormField from "../../utils/Form/formField";
 import {
     update,
@@ -179,6 +181,16 @@ class AddProduct extends Component {
                 validationMessage: "",
                 showLabel: true,
             },
+            images: {
+                value: [],
+                validation: {
+                    required: false,
+                },
+                valid: true,
+                touched: false,
+                validationMessage: "",
+                showLabel: false,
+            },
         },
     };
 
@@ -244,12 +256,25 @@ class AddProduct extends Component {
         }
     };
 
+    imagesHandler = (images) => {
+        const newFormdata = { ...this.state.formdata };
+        newFormdata["images"].value = images;
+        newFormdata["images"].valid = true;
+        this.setState({
+            formdata: newFormdata,
+        });
+    };
+
     render() {
         return (
             <UserLayout>
                 <div>
                     <h1>Add product</h1>
                     <form onSubmit={(event) => this.submbitForm(event)}>
+                        <FileUpload
+                            imagesHandler={(images) => this.imagesHandler(images)}
+                            reset={this.state.formSuccess}
+                        />
                         <FormField
                             id={"name"}
                             formdata={this.state.formdata.name}
@@ -303,7 +328,7 @@ class AddProduct extends Component {
                         {this.state.formError ? (
                             <div className="error_label">Please check your data</div>
                         ) : null}
-                        <button onClick={(event) => this.submitForm(event)}>
+                        <button type="submit" onClick={(event) => this.submitForm(event)}>
                             Add product
                         </button>
                     </form>

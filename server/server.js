@@ -2,6 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
+const formiable = require("express-formidable");
+const cloudinary = require("cloudinary");
 // const bcrypt = require("bcrypt");
 
 const app = express();
@@ -25,6 +27,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
+
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET,
+});
 
 // Middleware
 const { auth } = require("./middleware/auth");
@@ -209,6 +217,23 @@ app.get("/api/user/logout", auth, (req, res) => {
         res.clearCookie("w_auth");
         return res.status(200).send({ success: true });
     });
+});
+
+app.post("/api/user/uploadimage", auth, admin, formiable(), (req, res) => {
+    cloudinary.uploader.upload(
+        req.files.file.path,
+        (result) => {
+            console.log(result);
+            res.status(200).send({
+                public_id: result.public_id,
+                url: result.url,
+            });
+        },
+        {
+            public_id: `${Date.now()}`,
+            resource_type: "auto",
+        }
+    );
 });
 
 // app.post("/check", async (req, res) => {
