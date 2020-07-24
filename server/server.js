@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
-const formiable = require("express-formidable");
+const formidable = require("express-formidable");
 const cloudinary = require("cloudinary");
 // const bcrypt = require("bcrypt");
 
@@ -82,14 +82,16 @@ app.post("/api/product/shop", (req, res) => {
         });
 });
 
-app.post("/api/product/article", auth, admin, async (req, res) => {
-    try {
-        const product = new Product(req.body);
-        await product.save();
-        return res.status(201).json({ success: true, product: product });
-    } catch (error) {
-        return res.status(400).json({ success: false });
-    }
+app.post("/api/product/article", auth, admin, (req, res) => {
+    const product = new Product(req.body);
+
+    product.save((err, doc) => {
+        if (err) return res.json({ success: false, err });
+        res.status(200).json({
+            success: true,
+            article: doc,
+        });
+    });
 });
 
 app.get("/api/product/article_by_id", async (req, res) => {
@@ -219,7 +221,7 @@ app.get("/api/user/logout", auth, (req, res) => {
     });
 });
 
-app.post("/api/user/uploadimage", auth, admin, formiable(), (req, res) => {
+app.post("/api/user/uploadimage", auth, admin, formidable(), (req, res) => {
     cloudinary.uploader.upload(
         req.files.file.path,
         (result) => {
@@ -234,6 +236,14 @@ app.post("/api/user/uploadimage", auth, admin, formiable(), (req, res) => {
             resource_type: "auto",
         }
     );
+});
+
+app.get("/api/user/removeimage", auth, admin, (req, res) => {
+    let image_id = req.query.public_id;
+    cloudinary.uploader.destroy(image_id, (err, result) => {
+        if (err) return res.json({ success: false, err });
+        res.status(200).send("ok");
+    });
 });
 
 // app.post("/check", async (req, res) => {

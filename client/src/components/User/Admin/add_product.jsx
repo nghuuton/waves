@@ -189,7 +189,7 @@ class AddProduct extends Component {
                 valid: true,
                 touched: false,
                 validationMessage: "",
-                showLabel: false,
+                showlabel: false,
             },
         },
     };
@@ -237,6 +237,7 @@ class AddProduct extends Component {
     submitForm = (event) => {
         event.preventDefault();
         const dataToSubmit = generateData(this.state.formdata, "products");
+        console.log(dataToSubmit);
         let formIsValid = isFormValid(this.state.formdata, "register");
         if (formIsValid) {
             console.log(dataToSubmit);
@@ -257,11 +258,12 @@ class AddProduct extends Component {
     };
 
     imagesHandler = (images) => {
-        const newFormdata = { ...this.state.formdata };
-        newFormdata["images"].value = images;
-        newFormdata["images"].valid = true;
+        const newFormData = { ...this.state.formdata };
+        newFormData["images"].value = images;
+        newFormData["images"].valid = true;
+
         this.setState({
-            formdata: newFormdata,
+            formdata: newFormData,
         });
     };
 

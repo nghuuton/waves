@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import MyButton from "./button";
 
 class Card extends Component {
-    renderCardImage = (image) => {
-        if (image.length > 0) {
-            return image[0].url;
+    renderCardImage = (images) => {
+        if (images.length > 0) {
+            return images[0].url;
         } else {
             return "/images/image_not_availble.png";
         }
@@ -16,7 +16,9 @@ class Card extends Component {
                 <div
                     className="image"
                     style={{
-                        background: `url(${this.renderCardImage(props.image)}) no-repeat`,
+                        background: `url(${this.renderCardImage(
+                            props.images
+                        )}) no-repeat`,
                     }}
                 ></div>
                 <div className="action_container">
