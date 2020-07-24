@@ -78,7 +78,7 @@ app.post("/api/product/article", auth, admin, async (req, res) => {
     try {
         const product = new Product(req.body);
         await product.save();
-        return res.status(201).json({ success: true, product });
+        return res.status(201).json({ success: true, product: product });
     } catch (error) {
         return res.status(400).json({ success: false });
     }

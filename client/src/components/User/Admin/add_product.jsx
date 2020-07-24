@@ -7,10 +7,11 @@ import {
     generateData,
     isFormValid,
     populateOptionFields,
+    resetFields,
 } from "../../utils/Form/formAction";
 
 import { connect } from "react-redux";
-import { getBrands, getWoods } from "../../../actions/products_actions";
+import { getBrands, getWoods, addProduct } from "../../../actions/products_actions";
 
 class AddProduct extends Component {
     state = {
@@ -103,7 +104,7 @@ class AddProduct extends Component {
                 validationMessage: "",
                 showLabel: true,
             },
-            availbale: {
+            available: {
                 element: "select",
                 value: "",
                 config: {
@@ -206,21 +207,38 @@ class AddProduct extends Component {
     };
 
     updateForm = (element) => {
-        const newFormdata = update(element, this.state.formdata, "register");
+        const newFormdata = update(element, this.state.formdata, "products");
         this.setState({
             formError: false,
             formdata: newFormdata,
         });
     };
 
+    resetFieldHandler = () => {
+        const newFormdata = resetFields(this.state.formdata, "products");
+        this.setState({
+            formSuccess: true,
+            formdata: newFormdata,
+        });
+    };
+
     submitForm = (event) => {
         event.preventDefault();
-        const dataToSubmit = generateData(this.state.formdata, "Add product");
+        const dataToSubmit = generateData(this.state.formdata, "products");
         let formIsValid = isFormValid(this.state.formdata, "register");
         if (formIsValid) {
+            console.log(dataToSubmit);
+            this.props.dispatch(addProduct(dataToSubmit)).then(() => {
+                if (this.props.products.addProduct.success) {
+                    this.resetFieldHandler();
+                } else {
+                    this.setState({
+                        formError: true,
+                    });
+                }
+            });
         } else {
             this.setState({
-                formSuccess: false,
                 formError: true,
             });
         }
@@ -259,8 +277,8 @@ class AddProduct extends Component {
                             change={(element) => this.updateForm(element)}
                         />
                         <FormField
-                            id={"availbale"}
-                            formdata={this.state.formdata.availbale}
+                            id={"available"}
+                            formdata={this.state.formdata.available}
                             change={(element) => this.updateForm(element)}
                         />
                         <FormField
