@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
 
 const app = express();
 require("dotenv").config();
@@ -28,9 +28,133 @@ app.use(morgan("dev"));
 
 // Middleware
 const { auth } = require("./middleware/auth");
-
+const { admin } = require("./middleware/admin");
 // Models
 const User = require("./models/user");
+const Brand = require("./models/brand");
+const Wood = require("./models/wood");
+const Product = require("./models/product");
+
+// Product
+
+app.post("/api/product/shop", (req, res) => {
+    let order = req.body.order ? req.body.order : "desc";
+    let sortBy = req.body.sortBy ? req.body.sortBy : "_id";
+    let limit = req.body.limit ? parseInt(req.body.limit) : 100;
+    let skip = parseInt(req.body.skip);
+    let findArgs = {};
+
+    for (let key in req.body.filters) {
+        if (req.body.filters[key].length > 0) {
+            if (key === "price") {
+                findArgs[key] = {
+                    $gte: req.body.filters[key][0],
+                    $lte: req.body.filters[key][1],
+                };
+            } else {
+                findArgs[key] = req.body.filters[key];
+            }
+        }
+    }
+
+    Product.find(findArgs)
+        .populate("brand")
+        .populate("wood")
+        .sort([[sortBy, order]])
+        .skip(skip)
+        .limit(limit)
+        .exec((err, articles) => {
+            if (err) return res.status(400).json({ err });
+            res.status(200).json({
+                size: articles.length,
+                articles,
+            });
+        });
+});
+
+app.post("/api/product/article", auth, admin, async (req, res) => {
+    try {
+        const product = new Product(req.body);
+        await product.save();
+        return res.status(201).json({ success: true, product });
+    } catch (error) {
+        return res.status(400).json({ success: false });
+    }
+});
+
+app.get("/api/product/article_by_id", async (req, res) => {
+    let type = req.query.type;
+    let items = req.query.id;
+    if (type === "array") {
+        let ids = req.query.id.split(",");
+        items = [];
+        items = ids.map((item) => {
+            return mongoose.Types.ObjectId(item);
+        });
+    }
+    const product = await Product.find({ _id: { $in: items } })
+        .populate("brand", "name")
+        .populate("wood", "name");
+    return res.status(200).json({ product });
+});
+
+app.get("/api/product/articles", async (req, res) => {
+    let order = req.query.order ? req.query.order : "asc";
+    let sortBy = req.query.sortBy ? req.query.sortBy : "_id";
+    let limit = req.query.limit ? req.query.limit : 100;
+    try {
+        const products = await Product.find()
+            .populate("brand")
+            .populate("wood")
+            .sort([[sortBy, order]])
+            .limit(Number(limit));
+        return res.status(200).json({ products });
+    } catch (error) {
+        return res.status(400).send(error);
+    }
+});
+
+// Woods
+app.post("/api/product/wood", auth, admin, async (req, res) => {
+    try {
+        const wood = new Wood(req.body);
+        await wood.save();
+        return res.status(201).json({ success: true, wood });
+    } catch (error) {
+        return res.status(400).json({ success: false });
+    }
+});
+
+app.get("/api/product/woods", async (req, res) => {
+    try {
+        const woods = await Wood.find({});
+        return res.status(200).json({ woods });
+    } catch (error) {
+        return res.status(400).json({ error });
+    }
+});
+
+// Brand
+app.post("/api/product/brand", auth, admin, async (req, res) => {
+    try {
+        const brand = new Brand(req.body);
+        await brand.save();
+        return res.status(201).json({ success: true, brand });
+    } catch (error) {
+        return res.status(404).json({ success: fase, error });
+    }
+});
+
+app.get("/api/product/brands", async (req, res) => {
+    try {
+        const brands = await Brand.find({});
+        return res.status(200).json({ brands });
+    } catch (error) {
+        return res.status(400).json({ error });
+    }
+});
+
+// User
 
 app.get("/api/user/auth", auth, (req, res) => {
     res.status(200).json({
@@ -115,3 +239,5 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log("Sever is start on", PORT);
 });
+
+module.exports = app;

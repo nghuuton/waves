@@ -5,9 +5,12 @@
     "license": "MIT",
     "scripts": {
         "start": "node server/server.js",
-        "server": "nodemon server/server.js"
+        "server": "nodemon server/server.js",
+        "client": "npm run start --prefix client",
+        "dev": "concurrently \"npm run server\" \"npm run client\""
     },
     "dependencies": {
+        "@babel/runtime": "7.0.0-beta.55",
         "bcrypt": "^5.0.0",
         "body-parser": "^1.19.0",
         "cloudinary": "^1.22.0",
