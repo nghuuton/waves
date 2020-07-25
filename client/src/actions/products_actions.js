@@ -9,6 +9,10 @@ import {
     GET_PRODUCTS_TO_SHOP,
     ADD_PRODUCT,
     ADD_BRAND,
+    ADD_WOOD,
+    GET_PRODUCT_DETAILS,
+    CLEAR_PRODUCT,
+    CLEAR_PRODUCT_DETAILS,
 } from "./types";
 
 export function getProductsBySell() {
@@ -81,6 +85,13 @@ export function addProduct(dataToSubmit) {
     };
 }
 
+export function clearProduct() {
+    return {
+        type: CLEAR_PRODUCT,
+        payload: "",
+    };
+}
+
 export function addBrand(dataToSubmit, existingBrands) {
     const request = axios
         .post(`${PRODUCT_SERVER}/brand`, dataToSubmit)
@@ -94,5 +105,40 @@ export function addBrand(dataToSubmit, existingBrands) {
     return {
         type: ADD_BRAND,
         payload: request,
+    };
+}
+
+export function addWood(dataToSubmit, existingWoods) {
+    const request = axios
+        .post(`${PRODUCT_SERVER}/wood`, dataToSubmit)
+        .then((response) => {
+            let woods = [...existingWoods, response.data.wood];
+            return {
+                success: response.data.success,
+                woods,
+            };
+        });
+    return {
+        type: ADD_WOOD,
+        payload: request,
+    };
+}
+
+export function getProduct(id) {
+    const request = axios
+        .get(`${PRODUCT_SERVER}/article_by_id?id=${id}&type=single`)
+        .then((response) => {
+            return response.data.product[0];
+        });
+    return {
+        type: GET_PRODUCT_DETAILS,
+        payload: request,
+    };
+}
+
+export function clearProductDetails() {
+    return {
+        type: CLEAR_PRODUCT_DETAILS,
+        payload: "",
     };
 }

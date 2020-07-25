@@ -13,7 +13,12 @@ import {
 } from "../../utils/Form/formAction";
 
 import { connect } from "react-redux";
-import { getBrands, getWoods, addProduct } from "../../../actions/products_actions";
+import {
+    getBrands,
+    getWoods,
+    addProduct,
+    clearProduct,
+} from "../../../actions/products_actions";
 
 class AddProduct extends Component {
     state = {
@@ -228,10 +233,15 @@ class AddProduct extends Component {
 
     resetFieldHandler = () => {
         const newFormdata = resetFields(this.state.formdata, "products");
-        this.setState({
-            formSuccess: true,
-            formdata: newFormdata,
-        });
+        this.setState(
+            {
+                formSuccess: true,
+                formdata: newFormdata,
+            },
+            () => {
+                this.props.dispatch(clearProduct());
+            }
+        );
     };
 
     submitForm = (event) => {

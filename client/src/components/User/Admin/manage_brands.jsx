@@ -5,7 +5,6 @@ import {
     update,
     generateData,
     isFormValid,
-    populateOptionFields,
     resetFields,
 } from "../../utils/Form/formAction";
 
@@ -60,16 +59,23 @@ class ManageBrands extends Component {
 
     resetFieldsHandler = () => {
         const newFormdata = resetFields(this.state.formdata, "brand");
-        this.setState({
-            formdata: newFormdata,
-            formSuccess: true,
-        });
+        this.setState(
+            {
+                formdata: newFormdata,
+                formSuccess: true,
+            },
+            () => {
+                setTimeout(() => {
+                    this.setState({ formSuccess: "", formError: false });
+                }, 3000);
+            }
+        );
     };
 
     submitForm = (event) => {
         event.preventDefault();
-        const dataToSubmit = generateData(this.state.formdata, "products");
-        let formIsValid = isFormValid(this.state.formdata, "register");
+        const dataToSubmit = generateData(this.state.formdata, "brand");
+        let formIsValid = isFormValid(this.state.formdata, "brand");
         if (formIsValid) {
             this.props
                 .dispatch(addBrand(dataToSubmit, this.props.products.brands))
