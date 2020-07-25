@@ -11,7 +11,7 @@ const UserProductBlock = ({ products, removeItem }) => {
 
     const renderItems = () =>
         products.cartDetail
-            ? products.cartDetail.product.map((item) => (
+            ? products.cartDetail.map((item) => (
                   <div className="user_product_block" key={item._id}>
                       <div className="item">
                           <div

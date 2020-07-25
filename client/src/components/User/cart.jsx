@@ -26,13 +26,34 @@ class UserCart extends Component {
                 user.userData.cart.forEach((item) => {
                     cartItems.push(item._id);
                 });
-                this.props.dispatch(getCartItems(cartItems, user.userData.cart));
+                this.props
+                    .dispatch(getCartItems(cartItems, user.userData.cart))
+                    .then((response) => {
+                        if (this.props.user.cartDetail.length > 0) {
+                            this.caculateTotal(this.props.user.cartDetail);
+                        }
+                    });
             }
         }
     }
 
-    removeFromCart = (_id) => {};
+    caculateTotal = (cartDetail) => {
+        let total = 0;
+        cartDetail.forEach((item) => {
+            total += parseInt(item.price, 10) * item.quantity;
+        });
+        this.setState({ total, showTotal: true });
+    };
 
+    removeFromCart = (_id) => {};
+    showNoItemmessage = () => {
+        return (
+            <div className="cart_no_items">
+                <FontAwesomeIcon icon={faFrown} />
+                <div>You have no items.</div>
+            </div>
+        );
+    };
     render() {
         return (
             <UserLayout>
@@ -44,7 +65,25 @@ class UserCart extends Component {
                             type="cart"
                             removeItem={(_id) => this.removeFromCart(_id)}
                         />
+                        {this.state.showTotal ? (
+                            <div>
+                                <div className="user_cart_sum">
+                                    <div>Total amount: $ {this.state.total}</div>
+                                </div>
+                            </div>
+                        ) : this.state.showSuccess ? (
+                            <div className="cart_success">
+                                <FontAwesomeIcon icon={faSmile} />
+                                <div>Thank you</div>
+                                <div>YOUR ORDER IS NOW COMPLETE</div>
+                            </div>
+                        ) : (
+                            this.showNoItemmessage()
+                        )}
                     </div>
+                    {this.state.showTotal ? (
+                        <div className="paypal_button_container">Paypal</div>
+                    ) : null}
                 </div>
             </UserLayout>
         );
