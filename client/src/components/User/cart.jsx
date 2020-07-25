@@ -8,6 +8,7 @@ import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import faFrown from "@fortawesome/fontawesome-free-solid/faFrown";
 import faSmile from "@fortawesome/fontawesome-free-solid/faSmile";
 import { getCartItems } from "../../actions/user_actions";
+import UserProductBlock from "../utils/User/product_block";
 
 class UserCart extends Component {
     state = {
@@ -18,22 +19,33 @@ class UserCart extends Component {
     };
 
     componentDidMount() {
-        let cartItem = [];
+        let cartItems = [];
         let user = this.props.user;
         if (user.userData.cart) {
             if (user.userData.cart.length > 0) {
                 user.userData.cart.forEach((item) => {
-                    cartItem.push(item._id);
+                    cartItems.push(item._id);
                 });
-                this.props.dispatch(getCartItems(cartItem, user.userData.cart));
+                this.props.dispatch(getCartItems(cartItems, user.userData.cart));
             }
         }
     }
 
+    removeFromCart = (_id) => {};
+
     render() {
         return (
             <UserLayout>
-                <div>cart</div>
+                <div>
+                    <h1>My cart</h1>
+                    <div className="user_cart">
+                        <UserProductBlock
+                            products={this.props.user}
+                            type="cart"
+                            removeItem={(_id) => this.removeFromCart(_id)}
+                        />
+                    </div>
+                </div>
             </UserLayout>
         );
     }
