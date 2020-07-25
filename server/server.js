@@ -253,7 +253,6 @@ app.get("/api/user/removeimage", auth, admin, (req, res) => {
 app.post("/api/user/add-to-cart", auth, async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
-        const product = await Product.findById(req.body);
         let duplicate = false;
         user.cart.forEach((item) => {
             if (item._id == req.body._id) {
