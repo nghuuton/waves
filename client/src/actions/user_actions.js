@@ -8,6 +8,7 @@ import {
     LOGOUT_USER,
     ADD_TO_CART,
     GET_CART_ITEMS_USER,
+    REMOVE_ITEM_FROM_CART,
 } from "./types";
 
 export function loginUser(dataToSubmit) {
@@ -78,6 +79,18 @@ export function getCartItems(cartItems, userCart) {
 
     return {
         type: GET_CART_ITEMS_USER,
+        payload: request,
+    };
+}
+
+export function removeItem(_id) {
+    const request = axios
+        .post(`${USER_SERVER}/remove-from-cart`, { _id })
+        .then((response) => {
+            return response.data;
+        });
+    return {
+        type: REMOVE_ITEM_FROM_CART,
         payload: request,
     };
 }

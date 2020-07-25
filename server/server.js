@@ -292,6 +292,34 @@ app.post("/api/user/add-to-cart", auth, async (req, res) => {
     }
 });
 
+app.post("/api/user/remove-from-cart", auth, async (req, res) => {
+    try {
+        const user = await User.findOneAndUpdate(
+            { _id: req.user._id },
+            {
+                $pull: {
+                    cart: {
+                        _id: mongoose.Types.ObjectId(req.body._id),
+                    },
+                },
+            },
+            { new: true }
+        );
+        let cart = user.cart;
+        let array = cart.map((item) => {
+            return mongoose.Types.ObjectId(item._id);
+        });
+
+        const cartDetail = await Product.find({ _id: { $in: array } })
+            .populate("wood")
+            .populate("brand");
+
+        return res.status(200).json({ cart, cartDetail });
+    } catch (error) {
+        return res.status(400).send(error);
+    }
+});
+
 // app.post("/check", async (req, res) => {
 //     const user = await User.findOne({
 //         email: req.body.email,

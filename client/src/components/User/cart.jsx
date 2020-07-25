@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import faFrown from "@fortawesome/fontawesome-free-solid/faFrown";
 import faSmile from "@fortawesome/fontawesome-free-solid/faSmile";
-import { getCartItems } from "../../actions/user_actions";
+import { getCartItems, removeItem } from "../../actions/user_actions";
 import UserProductBlock from "../utils/User/product_block";
 
 class UserCart extends Component {
@@ -45,7 +45,24 @@ class UserCart extends Component {
         this.setState({ total, showTotal: true });
     };
 
-    removeFromCart = (_id) => {};
+    removeFromCart = (_id) => {
+        this.props.dispatch(removeItem(_id)).then((response) => {
+            if (response.payload.cartDetail.length > 0) {
+                const cartDetail = response.payload.cartDetail;
+                const cart = response.payload.cart;
+                cart.forEach((item) => {
+                    cartDetail.forEach((k, i) => {
+                        if (item._id === k._id) {
+                            cartDetail[i].quantity = item.quantity;
+                        }
+                    });
+                });
+                this.caculateTotal(cartDetail);
+            } else {
+                this.setState({ showTotal: false });
+            }
+        });
+    };
     showNoItemmessage = () => {
         return (
             <div className="cart_no_items">
