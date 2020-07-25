@@ -4,6 +4,7 @@ import PageTop from "../utils/page_top";
 import { connect } from "react-redux";
 import { getProduct, clearProductDetails } from "../../actions/products_actions";
 import ProductNfo from "./productNfo";
+import ProductImg from "./productImg";
 
 class ProductPage extends Component {
     state = {};
@@ -24,7 +25,13 @@ class ProductPage extends Component {
                 <div className="container">
                     {this.props.products.productDetails ? (
                         <div className="product_detail_wrapper">
-                            <div className="left">images</div>
+                            <div className="left">
+                                <div style={{ width: "500px" }}>
+                                    <ProductImg
+                                        detail={this.props.products.productDetails}
+                                    />
+                                </div>
+                            </div>
                             <div className="right">
                                 <ProductNfo
                                     addCart={(id) => this.addToCartHandler(id)}
