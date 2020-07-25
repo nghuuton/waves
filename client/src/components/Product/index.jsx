@@ -5,14 +5,21 @@ import { connect } from "react-redux";
 import { getProduct, clearProductDetails } from "../../actions/products_actions";
 import ProductNfo from "./productNfo";
 import ProductImg from "./productImg";
+import { scrollToTop } from "../utils/misc";
 
 class ProductPage extends Component {
-    state = {};
-
     componentDidMount() {
         const id = this.props.match.params.id;
-        this.props.dispatch(getProduct(id));
+        this.props.dispatch(getProduct(id)).then((response) => {
+            if (!response.payload) {
+                this.props.history.push("/");
+            }
+        });
     }
+
+    getBack = () => {
+        this.props.history.push("/");
+    };
 
     componentWillUnmount() {
         this.props.dispatch(clearProductDetails());
@@ -40,7 +47,7 @@ class ProductPage extends Component {
                             </div>
                         </div>
                     ) : (
-                        "Loading"
+                        "Sorry the product not found. U will back to home a seconds..."
                     )}
                 </div>
             </div>

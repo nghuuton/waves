@@ -104,10 +104,14 @@ app.get("/api/product/article_by_id", async (req, res) => {
             return mongoose.Types.ObjectId(item);
         });
     }
-    const product = await Product.find({ _id: { $in: items } })
-        .populate("brand", "name")
-        .populate("wood", "name");
-    return res.status(200).json({ product });
+    try {
+        const product = await Product.find({ _id: { $in: items } })
+            .populate("brand", "name")
+            .populate("wood", "name");
+        return res.status(200).json({ product });
+    } catch (error) {
+        return res.status(400).send(error);
+    }
 });
 
 app.get("/api/product/articles", async (req, res) => {

@@ -129,6 +129,9 @@ export function getProduct(id) {
         .get(`${PRODUCT_SERVER}/article_by_id?id=${id}&type=single`)
         .then((response) => {
             return response.data.product[0];
+        })
+        .catch((err) => {
+            console.log(err);
         });
     return {
         type: GET_PRODUCT_DETAILS,
