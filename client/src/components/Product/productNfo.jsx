@@ -51,7 +51,7 @@ const ProductNfo = (props) => {
             <div className="cart">
                 <MyButton
                     type="add_to_cart_link"
-                    runAction={() => console.log("Add to cart")}
+                    runAction={() => props.addCart(detail._id)}
                 />
             </div>
         </div>

@@ -250,6 +250,49 @@ app.get("/api/user/removeimage", auth, admin, (req, res) => {
     });
 });
 
+app.post("/api/user/add-to-cart", auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        const product = await Product.findById(req.body);
+        let duplicate = false;
+        user.cart.forEach((item) => {
+            if (item._id == req.body._id) {
+                duplicate = true;
+            }
+        });
+        // console.log(duplicate);
+        if (duplicate) {
+            const user = await User.findOneAndUpdate(
+                { _id: req.user._id, "cart._id": mongoose.Types.ObjectId(req.body._id) },
+                {
+                    $inc: {
+                        "cart.$.quantity": 1,
+                    },
+                },
+                { new: true }
+            );
+            return res.status(200).json(user.cart);
+        } else {
+            const user = await User.findOneAndUpdate(
+                { _id: req.user._id },
+                {
+                    $push: {
+                        cart: {
+                            _id: mongoose.Types.ObjectId(req.body._id),
+                            quantity: 1,
+                            date: Date.now(),
+                        },
+                    },
+                },
+                { new: true }
+            );
+            return res.status(200).json(user.cart);
+        }
+    } catch (error) {
+        return res.status(400).send(error);
+    }
+});
+
 // app.post("/check", async (req, res) => {
 //     const user = await User.findOne({
 //         email: req.body.email,
