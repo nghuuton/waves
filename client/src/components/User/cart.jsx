@@ -9,7 +9,9 @@ import faFrown from "@fortawesome/fontawesome-free-solid/faFrown";
 import faSmile from "@fortawesome/fontawesome-free-solid/faSmile";
 import { getCartItems, removeItem } from "../../actions/user_actions";
 import UserProductBlock from "../utils/User/product_block";
+import Paypal from "../utils/paypal";
 
+//AZPgbZgP2zp4RIXxkpjCQHxGwt4PdyxyLOXL_qfLSr0RZEdtl-o-V7GzE1K3oRbdrqnyRIhxuTdzzb-q
 class UserCart extends Component {
     state = {
         loading: true,
@@ -71,6 +73,13 @@ class UserCart extends Component {
             </div>
         );
     };
+
+    transactionError = (data) => {};
+
+    transactionCancel = (data) => {};
+
+    transactionSuccess = (data) => {};
+
     render() {
         return (
             <UserLayout>
@@ -99,7 +108,14 @@ class UserCart extends Component {
                         )}
                     </div>
                     {this.state.showTotal ? (
-                        <div className="paypal_button_container">Paypal</div>
+                        <div className="paypal_button_container">
+                            <Paypal
+                                toPay={this.state.total}
+                                transactionError={(data) => this.transactionError(data)}
+                                transactionCancel={(data) => this.transactionCancel(data)}
+                                onSuccess={(data) => this.transactionSuccess(data)}
+                            />
+                        </div>
                     ) : null}
                 </div>
             </UserLayout>
