@@ -42,7 +42,7 @@ const User = require("./models/user");
 const Brand = require("./models/brand");
 const Wood = require("./models/wood");
 const Product = require("./models/product");
-
+const Payment = require("./models/payment");
 // Product
 
 app.post("/api/product/shop", (req, res) => {
@@ -318,6 +318,32 @@ app.post("/api/user/remove-from-cart", auth, async (req, res) => {
     } catch (error) {
         return res.status(400).send(error);
     }
+});
+
+app.post("/api/user/success-buy", auth, async (req, res) => {
+    let history = [];
+    let transactionData = {};
+    // user history
+    req.body.cardtDetail.forEach((item) => {
+        history.push({
+            dateOfPurchase: Date.now(),
+            name: item.name,
+            brand: item.brand.name,
+            id: item._id,
+            price: item.price,
+            quantity: item.quantity,
+            paymentId: req.body.paymentData.paymentID,
+        });
+    });
+    // payment dash
+    transactionData.user = {
+        id: req.user._id,
+        name: req.user.name,
+        lastname: req.user.lastname,
+        email: req.user.email,
+    };
+    transactionData.data = req.body.paymentData;
+    transactionData.product = history;
 });
 
 // app.post("/check", async (req, res) => {
