@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const formidable = require("express-formidable");
 const cloudinary = require("cloudinary");
+const async = require("async");
 // const bcrypt = require("bcrypt");
 
 const app = express();
@@ -324,7 +325,7 @@ app.post("/api/user/success-buy", auth, async (req, res) => {
     let history = [];
     let transactionData = {};
     // user history
-    req.body.cardtDetail.forEach((item) => {
+    req.body.cartDetail.forEach((item) => {
         history.push({
             dateOfPurchase: Date.now(),
             name: item.name,
@@ -344,6 +345,7 @@ app.post("/api/user/success-buy", auth, async (req, res) => {
     };
     transactionData.data = req.body.paymentData;
     transactionData.product = history;
+    // console.log(transactionData);
     try {
         const user = await User.findOneAndUpdate(
             { _id: req.user._id },
@@ -351,11 +353,13 @@ app.post("/api/user/success-buy", auth, async (req, res) => {
             { new: true }
         );
         const payment = new Payment(transactionData);
+        // console.log(payment);
         await payment.save();
         let products = [];
         payment.product.forEach((item) => {
-            products.push({ id: item._id, quantity: item.quantity });
+            products.push({ id: item.id, quantity: item.quantity });
         });
+        console.log(products);
         async.eachSeries(
             products,
             (item, callback) => {

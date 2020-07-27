@@ -6,6 +6,7 @@ import {
     ADD_TO_CART,
     GET_CART_ITEMS_USER,
     REMOVE_ITEM_FROM_CART,
+    ON_SUCCESS_BUY_USER,
 } from "../actions/types";
 
 export default function (state = {}, action) {
@@ -25,6 +26,16 @@ export default function (state = {}, action) {
         case REMOVE_ITEM_FROM_CART:
             return {
                 ...state,
+                userData: {
+                    ...state.userData,
+                    cart: action.payload.cart,
+                },
+                cartDetail: action.payload.cartDetail,
+            };
+        case ON_SUCCESS_BUY_USER:
+            return {
+                ...state,
+                successBuy: action.payload.success,
                 userData: {
                     ...state.userData,
                     cart: action.payload.cart,

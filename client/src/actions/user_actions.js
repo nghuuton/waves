@@ -9,6 +9,7 @@ import {
     ADD_TO_CART,
     GET_CART_ITEMS_USER,
     REMOVE_ITEM_FROM_CART,
+    ON_SUCCESS_BUY_USER,
 } from "./types";
 
 export function loginUser(dataToSubmit) {
@@ -91,6 +92,17 @@ export function removeItem(_id) {
         });
     return {
         type: REMOVE_ITEM_FROM_CART,
+        payload: request,
+    };
+}
+
+export function onSuccessBuy(data) {
+    const request = axios.post(`${USER_SERVER}/success-buy`, data).then((response) => {
+        return response.data;
+    });
+
+    return {
+        type: ON_SUCCESS_BUY_USER,
         payload: request,
     };
 }
