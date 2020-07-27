@@ -344,6 +344,40 @@ app.post("/api/user/success-buy", auth, async (req, res) => {
     };
     transactionData.data = req.body.paymentData;
     transactionData.product = history;
+    try {
+        const user = await User.findOneAndUpdate(
+            { _id: req.user._id },
+            { $push: { history: history }, $set: { cart: [] } },
+            { new: true }
+        );
+        const payment = new Payment(transactionData);
+        await payment.save();
+        let products = [];
+        payment.product.forEach((item) => {
+            products.push({ id: item._id, quantity: item.quantity });
+        });
+        async.eachSeries(
+            products,
+            (item, callback) => {
+                Product.update(
+                    { _id: item.id },
+                    { $inc: { sold: item.quantity } },
+                    { new: false },
+                    callback
+                );
+            },
+            (err) => {
+                if (err) return res.json({ success: false, err });
+                res.status(200).json({
+                    success: true,
+                    cart: user.cart,
+                    cartDetail: [],
+                });
+            }
+        );
+    } catch (error) {
+        return res.status(400).json({ success: false, error });
+    }
 });
 
 // app.post("/check", async (req, res) => {
