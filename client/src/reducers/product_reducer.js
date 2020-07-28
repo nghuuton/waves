@@ -4,6 +4,12 @@ import {
     GET_WOODS,
     GET_BRANDS,
     GET_PRODUCTS_TO_SHOP,
+    ADD_PRODUCT,
+    ADD_BRAND,
+    ADD_WOOD,
+    GET_PRODUCT_DETAILS,
+    CLEAR_PRODUCT,
+    CLEAR_PRODUCT_DETAILS,
 } from "../actions/types";
 
 export default function (state = {}, action) {
@@ -22,6 +28,41 @@ export default function (state = {}, action) {
                 toShop: action.payload.articles,
                 toShopSize: action.payload.size,
             };
+        case ADD_PRODUCT:
+            return {
+                ...state,
+                addProduct: action.payload,
+            };
+        case CLEAR_PRODUCT: {
+            return {
+                ...state,
+                addProduct: action.payload,
+            };
+        }
+        case ADD_BRAND:
+            return {
+                ...state,
+                addBrand: action.payload.success,
+                brands: action.payload.brands,
+            };
+        case ADD_WOOD:
+            return {
+                ...state,
+                addWood: action.payload.success,
+                woods: action.payload.woods,
+            };
+        case GET_PRODUCT_DETAILS: {
+            return {
+                ...state,
+                productDetails: action.payload,
+            };
+        }
+        case CLEAR_PRODUCT_DETAILS: {
+            return {
+                ...state,
+                productDetails: action.payload,
+            };
+        }
         default:
             return state;
     }

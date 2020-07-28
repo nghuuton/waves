@@ -2,6 +2,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
+const formidable = require("express-formidable");
+const cloudinary = require("cloudinary");
+const async = require("async");
 // const bcrypt = require("bcrypt");
 
 const app = express();
@@ -26,6 +29,12 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
 
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET,
+});
+
 // Middleware
 const { auth } = require("./middleware/auth");
 const { admin } = require("./middleware/admin");
@@ -34,7 +43,8 @@ const User = require("./models/user");
 const Brand = require("./models/brand");
 const Wood = require("./models/wood");
 const Product = require("./models/product");
-
+const Payment = require("./models/payment");
+const Site = require("./models/site");
 // Product
 
 app.post("/api/product/shop", (req, res) => {
@@ -57,6 +67,8 @@ app.post("/api/product/shop", (req, res) => {
         }
     }
 
+    findArgs["publish"] = true;
+
     Product.find(findArgs)
         .populate("brand")
         .populate("wood")
@@ -72,14 +84,16 @@ app.post("/api/product/shop", (req, res) => {
         });
 });
 
-app.post("/api/product/article", auth, admin, async (req, res) => {
-    try {
-        const product = new Product(req.body);
-        await product.save();
-        return res.status(201).json({ success: true, product });
-    } catch (error) {
-        return res.status(400).json({ success: false });
-    }
+app.post("/api/product/article", auth, admin, (req, res) => {
+    const product = new Product(req.body);
+
+    product.save((err, doc) => {
+        if (err) return res.json({ success: false, err });
+        res.status(200).json({
+            success: true,
+            article: doc,
+        });
+    });
 });
 
 app.get("/api/product/article_by_id", async (req, res) => {
@@ -92,10 +106,14 @@ app.get("/api/product/article_by_id", async (req, res) => {
             return mongoose.Types.ObjectId(item);
         });
     }
-    const product = await Product.find({ _id: { $in: items } })
-        .populate("brand", "name")
-        .populate("wood", "name");
-    return res.status(200).json({ product });
+    try {
+        const product = await Product.find({ _id: { $in: items } })
+            .populate("brand", "name")
+            .populate("wood", "name");
+        return res.status(200).json({ product });
+    } catch (error) {
+        return res.status(400).send(error);
+    }
 });
 
 app.get("/api/product/articles", async (req, res) => {
@@ -207,6 +225,205 @@ app.get("/api/user/logout", auth, (req, res) => {
         res.clearCookie("w_auth");
         return res.status(200).send({ success: true });
     });
+});
+
+app.post("/api/user/uploadimage", auth, admin, formidable(), (req, res) => {
+    cloudinary.uploader.upload(
+        req.files.file.path,
+        (result) => {
+            console.log(result);
+            res.status(200).send({
+                public_id: result.public_id,
+                url: result.url,
+            });
+        },
+        {
+            public_id: `${Date.now()}`,
+            resource_type: "auto",
+        }
+    );
+});
+
+app.get("/api/user/removeimage", auth, admin, (req, res) => {
+    let image_id = req.query.public_id;
+    cloudinary.uploader.destroy(image_id, (err, result) => {
+        if (err) return res.json({ success: false, err });
+        res.status(200).send("ok");
+    });
+});
+
+app.post("/api/user/add-to-cart", auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        let duplicate = false;
+        user.cart.forEach((item) => {
+            if (item._id == req.body._id) {
+                duplicate = true;
+            }
+        });
+        // console.log(duplicate);
+        if (duplicate) {
+            const user = await User.findOneAndUpdate(
+                { _id: req.user._id, "cart._id": mongoose.Types.ObjectId(req.body._id) },
+                {
+                    $inc: {
+                        "cart.$.quantity": 1,
+                    },
+                },
+                { new: true }
+            );
+            return res.status(200).json(user.cart);
+        } else {
+            const user = await User.findOneAndUpdate(
+                { _id: req.user._id },
+                {
+                    $push: {
+                        cart: {
+                            _id: mongoose.Types.ObjectId(req.body._id),
+                            quantity: 1,
+                            date: Date.now(),
+                        },
+                    },
+                },
+                { new: true }
+            );
+            return res.status(200).json(user.cart);
+        }
+    } catch (error) {
+        return res.status(400).send(error);
+    }
+});
+
+app.post("/api/user/remove-from-cart", auth, async (req, res) => {
+    try {
+        const user = await User.findOneAndUpdate(
+            { _id: req.user._id },
+            {
+                $pull: {
+                    cart: {
+                        _id: mongoose.Types.ObjectId(req.body._id),
+                    },
+                },
+            },
+            { new: true }
+        );
+        let cart = user.cart;
+        let array = cart.map((item) => {
+            return mongoose.Types.ObjectId(item._id);
+        });
+
+        const cartDetail = await Product.find({ _id: { $in: array } })
+            .populate("wood")
+            .populate("brand");
+
+        return res.status(200).json({ cart, cartDetail });
+    } catch (error) {
+        return res.status(400).send(error);
+    }
+});
+
+app.post("/api/user/success-buy", auth, async (req, res) => {
+    let history = [];
+    let transactionData = {};
+    // user history
+    req.body.cartDetail.forEach((item) => {
+        history.push({
+            dateOfPurchase: Date.now(),
+            name: item.name,
+            brand: item.brand.name,
+            id: item._id,
+            price: item.price,
+            quantity: item.quantity,
+            paymentId: req.body.paymentData.paymentID,
+        });
+    });
+    // payment dash
+    transactionData.user = {
+        id: req.user._id,
+        name: req.user.name,
+        lastname: req.user.lastname,
+        email: req.user.email,
+    };
+    transactionData.data = req.body.paymentData;
+    transactionData.product = history;
+    // console.log(transactionData);
+    try {
+        const user = await User.findOneAndUpdate(
+            { _id: req.user._id },
+            { $push: { history: history }, $set: { cart: [] } },
+            { new: true }
+        );
+        const payment = new Payment(transactionData);
+        // console.log(payment);
+        await payment.save();
+        let products = [];
+        payment.product.forEach((item) => {
+            products.push({ id: item.id, quantity: item.quantity });
+        });
+        console.log(products);
+        async.eachSeries(
+            products,
+            (item, callback) => {
+                Product.update(
+                    { _id: item.id },
+                    { $inc: { sold: item.quantity } },
+                    { new: false },
+                    callback
+                );
+            },
+            (err) => {
+                if (err) return res.json({ success: false, err });
+                res.status(200).json({
+                    success: true,
+                    cart: user.cart,
+                    cartDetail: [],
+                });
+            }
+        );
+    } catch (error) {
+        return res.status(400).json({ success: false, error });
+    }
+});
+
+app.post("/api/user/update-profile", auth, async (req, res) => {
+    try {
+        const user = await User.findByIdAndUpdate(
+            req.user._id,
+            { $set: req.body },
+            {
+                new: true,
+            }
+        );
+        return res.status(200).json({ success: true });
+    } catch (error) {
+        return res.status(400).json({ success: false, error });
+    }
+});
+
+app.get("/api/site/site-data", async (req, res) => {
+    try {
+        const site = await Site.find({});
+        return res.status(200).send(site[0].siteNfo);
+    } catch (error) {
+        return res.status(400).send(error);
+    }
+});
+
+app.post("/api/site/site-data", auth, admin, async (req, res) => {
+    try {
+        const site = await Site.findOneAndUpdate(
+            { name: "Site nfo" },
+            {
+                $set: {
+                    siteNfo: req.body,
+                },
+            },
+            { new: true }
+        );
+        return res.status(200).send({ success: true, siteNfo: site.siteNfo });
+    } catch (error) {
+        return res.status(400).json({ success: false });
+    }
 });
 
 // app.post("/check", async (req, res) => {

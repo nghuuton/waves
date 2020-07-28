@@ -7,6 +7,12 @@ import {
     GET_BRANDS,
     GET_WOODS,
     GET_PRODUCTS_TO_SHOP,
+    ADD_PRODUCT,
+    ADD_BRAND,
+    ADD_WOOD,
+    GET_PRODUCT_DETAILS,
+    CLEAR_PRODUCT,
+    CLEAR_PRODUCT_DETAILS,
 } from "./types";
 
 export function getProductsBySell() {
@@ -66,5 +72,76 @@ export function getProductsToShop(skip, limit, filters = [], previousState = [])
     return {
         type: GET_PRODUCTS_TO_SHOP,
         payload: request,
+    };
+}
+
+export function addProduct(dataToSubmit) {
+    const request = axios
+        .post(`${PRODUCT_SERVER}/article`, dataToSubmit)
+        .then((response) => response.data);
+    return {
+        type: ADD_PRODUCT,
+        payload: request,
+    };
+}
+
+export function clearProduct() {
+    return {
+        type: CLEAR_PRODUCT,
+        payload: "",
+    };
+}
+
+export function addBrand(dataToSubmit, existingBrands) {
+    const request = axios
+        .post(`${PRODUCT_SERVER}/brand`, dataToSubmit)
+        .then((response) => {
+            let brands = [...existingBrands, response.data.brand];
+            return {
+                success: response.data.success,
+                brands,
+            };
+        });
+    return {
+        type: ADD_BRAND,
+        payload: request,
+    };
+}
+
+export function addWood(dataToSubmit, existingWoods) {
+    const request = axios
+        .post(`${PRODUCT_SERVER}/wood`, dataToSubmit)
+        .then((response) => {
+            let woods = [...existingWoods, response.data.wood];
+            return {
+                success: response.data.success,
+                woods,
+            };
+        });
+    return {
+        type: ADD_WOOD,
+        payload: request,
+    };
+}
+
+export function getProduct(id) {
+    const request = axios
+        .get(`${PRODUCT_SERVER}/article_by_id?id=${id}&type=single`)
+        .then((response) => {
+            return response.data.product[0];
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    return {
+        type: GET_PRODUCT_DETAILS,
+        payload: request,
+    };
+}
+
+export function clearProductDetails() {
+    return {
+        type: CLEAR_PRODUCT_DETAILS,
+        payload: "",
     };
 }

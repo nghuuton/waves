@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import MyButton from "./button";
 
+import { connect } from "react-redux";
+import { addToCart } from "../../actions/user_actions";
 class Card extends Component {
-    renderCardImage = (image) => {
-        if (image.length > 0) {
-            return image[0].url;
+    renderCardImage = (images) => {
+        if (images.length > 0) {
+            return images[0].url;
         } else {
             return "/images/image_not_availble.png";
         }
@@ -16,7 +18,9 @@ class Card extends Component {
                 <div
                     className="image"
                     style={{
-                        background: `url(${this.renderCardImage(props.image)}) no-repeat`,
+                        background: `url(${this.renderCardImage(
+                            props.images
+                        )}) no-repeat`,
                     }}
                 ></div>
                 <div className="action_container">
@@ -25,23 +29,32 @@ class Card extends Component {
                         <div className="name">{props.name}</div>
                         <div className="name">${props.price}</div>
                     </div>
-                </div>
-                {props.grid ? <div className="description">asdsad</div> : null}
-                <div className="actions">
-                    <div className="button_wrapp">
-                        <MyButton
-                            type="default"
-                            altClass="card_link"
-                            title="View product"
-                            linkTo={`/product-details/${props._id}`}
-                            addStyles={{ margin: "10px 0 0 0" }}
-                        />
-                    </div>
-                    <div className="button_wrapp">
-                        <MyButton
-                            type="tag_link"
-                            runAction={() => console.log("Add to cart")}
-                        />
+
+                    {props.grid ? (
+                        <div className="description">
+                            <p>{props.description}</p>
+                        </div>
+                    ) : null}
+                    <div className="actions">
+                        <div className="button_wrapp">
+                            <MyButton
+                                type="default"
+                                altClass="card_link"
+                                title="View product"
+                                linkTo={`/product-details/${props._id}`}
+                                addStyles={{ margin: "10px 0 0 0" }}
+                            />
+                        </div>
+                        <div className="button_wrapp">
+                            <MyButton
+                                type="tag_link"
+                                runAction={() =>
+                                    props.user.userData.isAuth
+                                        ? this.props.dispatch(addToCart(props._id))
+                                        : props.history.push("/register-login")
+                                }
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -49,4 +62,10 @@ class Card extends Component {
     }
 }
 
-export default Card;
+function mapStateToProps(state) {
+    return {
+        user: state.user,
+    };
+}
+
+export default connect(mapStateToProps)(Card);

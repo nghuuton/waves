@@ -8,8 +8,7 @@ export const validate = (element, formdata = []) => {
     }
 
     if (element.validation.confirm) {
-        const valid =
-            element.value.trim() === formdata[element.validation.confirm].value;
+        const valid = element.value.trim() === formdata[element.validation.confirm].value;
         const message = `${!valid ? "Password do not match" : ""}`;
         error = !valid ? [valid, message] : error;
     }
@@ -54,4 +53,40 @@ export const isFormValid = (formdata, formName) => {
         formIsValid = formdata[key].valid && formIsValid;
     }
     return formIsValid;
+};
+
+export const populateOptionFields = (formdata, array = [], field) => {
+    const newArray = [];
+    const newFormdata = { ...formdata };
+    array.forEach((item) => {
+        newArray.push({ key: item._id, value: item.name });
+    });
+    newFormdata[field].config.options = newArray;
+    return newFormdata;
+};
+
+export const resetFields = (formdata, formname) => {
+    const newFormdata = { ...formdata };
+    for (let key in newFormdata) {
+        if (key === "images") {
+            newFormdata[key].value = [];
+        } else {
+            newFormdata[key].value = "";
+        }
+        newFormdata[key].value = "";
+        newFormdata[key].valid = false;
+        newFormdata[key].touched = false;
+        newFormdata[key].validationMessage = "";
+    }
+    return newFormdata;
+};
+
+export const populateFields = (formData, fiels) => {
+    for (let key in formData) {
+        formData[key].value = fiels[key];
+        formData[key].valid = true;
+        formData[key].touched = true;
+        formData[key].validationMessage = "";
+    }
+    return formData;
 };

@@ -180,9 +180,14 @@ class Register extends Component {
                                     </div>
                                 </div>
                                 {this.state.formError ? (
-                                    <div className="error_label">Please check your data</div>
+                                    <div className="error_label">
+                                        Please check your data
+                                    </div>
                                 ) : null}
-                                <button onClick={(event) => this.submitForm(event)}>
+                                <button
+                                    type="submit"
+                                    onClick={(event) => this.submitForm(event)}
+                                >
                                     Create an account
                                 </button>
                             </form>
@@ -192,7 +197,9 @@ class Register extends Component {
                 <Dialog open={this.state.formSuccess}>
                     <div className="dialog_alert">
                         <div>Congratulations !!</div>
-                        <div>You will be redirected to the LOGIN in a couple seconds...</div>
+                        <div>
+                            You will be redirected to the LOGIN in a couple seconds...
+                        </div>
                     </div>
                 </Dialog>
             </div>

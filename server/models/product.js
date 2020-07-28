@@ -50,7 +50,7 @@ const productSchema = new Schema(
             required: true,
             type: Boolean,
         },
-        image: {
+        images: {
             type: Array,
             default: [],
         },
