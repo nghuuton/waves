@@ -8,6 +8,7 @@ import {
 } from "../utils/Form/formAction";
 
 import { connect } from "react-redux";
+import { updateData, clearUpdateUser } from "../../actions/user_actions";
 
 class UpdatepersonalNfo extends Component {
     state = {
@@ -82,7 +83,23 @@ class UpdatepersonalNfo extends Component {
         let dataToSubmit = generateData(this.state.formdata, "update");
         let formIsValid = isFormValid(this.state.formdata, "update");
         if (formIsValid) {
-            console.log(dataToSubmit);
+            this.props.dispatch(updateData(dataToSubmit)).then(() => {
+                if (this.props.user.updateUser) {
+                    this.setState(
+                        {
+                            formSuccess: true,
+                        },
+                        () => {
+                            setTimeout(() => {
+                                this.props.dispatch(clearUpdateUser());
+                                this.setState({
+                                    formSuccess: false,
+                                });
+                            }, 2000);
+                        }
+                    );
+                }
+            });
         } else {
             this.setState({
                 formError: true,

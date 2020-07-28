@@ -384,6 +384,21 @@ app.post("/api/user/success-buy", auth, async (req, res) => {
     }
 });
 
+app.post("/api/user/update-profile", auth, async (req, res) => {
+    try {
+        const user = await User.findByIdAndUpdate(
+            req.user._id,
+            { $set: req.body },
+            {
+                new: true,
+            }
+        );
+        return res.status(200).json({ success: true });
+    } catch (error) {
+        return res.status(400).json({ success: false, error });
+    }
+});
+
 // app.post("/check", async (req, res) => {
 //     const user = await User.findOne({
 //         email: req.body.email,

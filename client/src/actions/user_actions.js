@@ -10,6 +10,8 @@ import {
     GET_CART_ITEMS_USER,
     REMOVE_ITEM_FROM_CART,
     ON_SUCCESS_BUY_USER,
+    UPDATE_DATA,
+    CLEAR_UPDATE_USER,
 } from "./types";
 
 export function loginUser(dataToSubmit) {
@@ -104,5 +106,24 @@ export function onSuccessBuy(data) {
     return {
         type: ON_SUCCESS_BUY_USER,
         payload: request,
+    };
+}
+
+export function updateData(dataToSubmit) {
+    const request = axios
+        .post(`${USER_SERVER}/update-profile`, dataToSubmit)
+        .then((response) => {
+            return response.data;
+        });
+    return {
+        type: UPDATE_DATA,
+        payload: request,
+    };
+}
+
+export function clearUpdateUser() {
+    return {
+        type: CLEAR_UPDATE_USER,
+        payload: "",
     };
 }
