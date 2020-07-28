@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const formidable = require("express-formidable");
 const cloudinary = require("cloudinary");
 const async = require("async");
+const mailer = require("nodemailer");
 // const bcrypt = require("bcrypt");
 
 const app = express();
@@ -38,6 +39,32 @@ cloudinary.config({
 // Middleware
 const { auth } = require("./middleware/auth");
 const { admin } = require("./middleware/admin");
+
+const smtpTranspot = mailer.createTransport({
+    service: "Gmail",
+    auth: {
+        user: "nghuuton@gmail.com",
+        pass: "Tontanha123456",
+    },
+});
+
+var mail = {
+    from: "Waves <nghuuton@gmail.com>",
+    to: "nghuuton@gmail.com",
+    subject: "Send text email",
+    text: "Testing our waves mails",
+    html: "<b>Hello guys this works</b>",
+};
+
+smtpTranspot.sendMail(mail, function (error, response) {
+    if (error) {
+        console.log(error);
+    } else {
+        console.log("Mail sended");
+    }
+    smtpTranspot.close();
+});
+
 // Models
 const User = require("./models/user");
 const Brand = require("./models/brand");
