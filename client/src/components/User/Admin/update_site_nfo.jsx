@@ -8,6 +8,7 @@ import {
 } from "../../utils/Form/formAction";
 
 import { connect } from "react-redux";
+import { getSiteData, updateSiteNfo } from "../../../actions/site_actions";
 
 class UpdateSiteNfo extends Component {
     state = {
@@ -86,6 +87,16 @@ class UpdateSiteNfo extends Component {
         },
     };
 
+    componentDidMount() {
+        this.props.dispatch(getSiteData()).then(() => {
+            const newFormdata = populateFields(
+                this.state.formdata,
+                this.props.site.siteData[0]
+            );
+            this.setState({ formdata: newFormdata });
+        });
+    }
+
     updateForm = (element) => {
         const newFormdata = update(element, this.state.formdata, "site");
         this.setState({
@@ -99,7 +110,20 @@ class UpdateSiteNfo extends Component {
         let dataToSubmit = generateData(this.state.formdata, "site");
         let formIsValid = isFormValid(this.state.formdata, "site");
         if (formIsValid) {
-            console.log(dataToSubmit);
+            this.props.dispatch(updateSiteNfo(dataToSubmit)).then(() => {
+                if (this.props.site.updateSiteSuccess) {
+                    this.setState(
+                        {
+                            formSuccess: true,
+                        },
+                        () => {
+                            setTimeout(() => {
+                                this.setState({ formSuccess: false });
+                            }, 2000);
+                        }
+                    );
+                }
+            });
         } else {
             this.setState({
                 formError: true,

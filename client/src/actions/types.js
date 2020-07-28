@@ -22,3 +22,6 @@ export const GET_BRANDS = "get_brands";
 
 export const ADD_WOOD = "add_wood";
 export const GET_WOODS = "get_woods";
+
+export const GET_SITE_DATA = "get_site_data";
+export const UPDATE_SITE_DATA = "update_site_data";

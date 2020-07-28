@@ -5,8 +5,8 @@ import faPhone from "@fortawesome/fontawesome-free-solid/faPhone";
 import faClock from "@fortawesome/fontawesome-free-solid/faClock";
 import faEnvelope from "@fortawesome/fontawesome-free-solid/faEnvelope";
 
-const Footer = () => {
-    return (
+const Footer = ({ site }) => {
+    return site.siteData ? (
         <footer className="bck_b_dark">
             <div className="container">
                 <div className="logo">WAVES</div>
@@ -15,46 +15,31 @@ const Footer = () => {
                         <h2>Contact information</h2>
                         <div className="business_nfo">
                             <div className="tag">
-                                <FontAwesomeIcon
-                                    icon={faCompass}
-                                    className="icon"
-                                />
+                                <FontAwesomeIcon icon={faCompass} className="icon" />
                                 <div className="nfo">
                                     <div>Address</div>
-                                    <div>
-                                        80 Trịnh Đình Trọng, Phú Trung, Tân Phú,
-                                        HCM
-                                    </div>
+                                    <div>{site.siteData[0].address}</div>
                                 </div>
                             </div>
                             <div className="tag">
-                                <FontAwesomeIcon
-                                    icon={faPhone}
-                                    className="icon"
-                                />
+                                <FontAwesomeIcon icon={faPhone} className="icon" />
                                 <div className="nfo">
                                     <div>Phone</div>
-                                    <div>0915716890</div>
+                                    <div>{site.siteData[0].phone}</div>
                                 </div>
                             </div>
                             <div className="tag">
-                                <FontAwesomeIcon
-                                    icon={faClock}
-                                    className="icon"
-                                />
+                                <FontAwesomeIcon icon={faClock} className="icon" />
                                 <div className="nfo">
                                     <div>Working hours</div>
-                                    <div>Mon-Sun/ 9am-8pm</div>
+                                    <div>{site.siteData[0].hours}</div>
                                 </div>
                             </div>
                             <div className="tag">
-                                <FontAwesomeIcon
-                                    icon={faEnvelope}
-                                    className="icon"
-                                />
+                                <FontAwesomeIcon icon={faEnvelope} className="icon" />
                                 <div className="nfo">
                                     <div>Email</div>
-                                    <div>nghuuton@gmail.com</div>
+                                    <div>{site.siteData[0].email}</div>
                                 </div>
                             </div>
                         </div>
@@ -63,15 +48,15 @@ const Footer = () => {
                         <h2>Be the first to know</h2>
                         <div>
                             <div>
-                                Get all the lastest information on events, sales
-                                and offers. You can miss out.
+                                Get all the lastest information on events, sales and
+                                offers. You can miss out.
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </footer>
-    );
+    ) : null;
 };
 
 export default Footer;

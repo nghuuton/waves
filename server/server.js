@@ -44,6 +44,7 @@ const Brand = require("./models/brand");
 const Wood = require("./models/wood");
 const Product = require("./models/product");
 const Payment = require("./models/payment");
+const Site = require("./models/site");
 // Product
 
 app.post("/api/product/shop", (req, res) => {
@@ -396,6 +397,32 @@ app.post("/api/user/update-profile", auth, async (req, res) => {
         return res.status(200).json({ success: true });
     } catch (error) {
         return res.status(400).json({ success: false, error });
+    }
+});
+
+app.get("/api/site/site-data", async (req, res) => {
+    try {
+        const site = await Site.find({});
+        return res.status(200).send(site[0].siteNfo);
+    } catch (error) {
+        return res.status(400).send(error);
+    }
+});
+
+app.post("/api/site/site-data", auth, admin, async (req, res) => {
+    try {
+        const site = await Site.findOneAndUpdate(
+            { name: "Site nfo" },
+            {
+                $set: {
+                    siteNfo: req.body,
+                },
+            },
+            { new: true }
+        );
+        return res.status(200).send({ success: true, siteNfo: site.siteNfo });
+    } catch (error) {
+        return res.status(400).json({ success: false });
     }
 });
 
