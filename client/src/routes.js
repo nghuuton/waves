@@ -14,6 +14,7 @@ import ProductPage from "./components/Product";
 import UserCart from "./components/User/cart";
 import UpdateProfile from "./components/User/user_profile";
 import ManageSite from "./components/User/Admin/manage_site";
+import NotFound from "./components/utils/not_found";
 
 const Routes = () => {
     return (
@@ -21,6 +22,7 @@ const Routes = () => {
             <Switch>
                 <Route path="/" exact component={Auth(Home, null)} />
                 <Route path="/shop" exact component={Auth(Shop, null)} />
+                <Route component={Auth(NotFound, null)} />
                 <Route
                     path="/product-details/:id"
                     exact
