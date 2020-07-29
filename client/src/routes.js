@@ -22,7 +22,7 @@ const Routes = () => {
             <Switch>
                 <Route path="/" exact component={Auth(Home, null)} />
                 <Route path="/shop" exact component={Auth(Shop, null)} />
-                <Route component={Auth(NotFound, null)} />
+
                 <Route
                     path="/product-details/:id"
                     exact
@@ -56,6 +56,7 @@ const Routes = () => {
                     component={Auth(UpdateProfile, true)}
                 />
                 <Route path="/admin/site-nfo" exact component={Auth(ManageSite, true)} />
+                <Route component={Auth(NotFound, false)} />
             </Switch>
         </Layout>
     );

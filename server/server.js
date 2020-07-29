@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const formidable = require("express-formidable");
 const cloudinary = require("cloudinary");
 const async = require("async");
+const SHA1 = require("crypto-js/sha1");
 // const bcrypt = require("bcrypt");
 
 const app = express();
@@ -38,7 +39,14 @@ cloudinary.config({
 // Middleware
 const { auth } = require("./middleware/auth");
 const { admin } = require("./middleware/admin");
+
+// Utils
 const { sendEmail } = require("./utils/mail/index");
+// const date = new Date();
+// const po = `PO-${date.getSeconds()}${date.getMilliseconds()}-${SHA1("1231297dfdb")
+//     .toString()
+//     .substring(0, 8)}`;
+// console.log(po);
 
 // const smtpTranspot = mailer.createTransport({
 //     service: "Gmail",
@@ -353,9 +361,14 @@ app.post("/api/user/remove-from-cart", auth, async (req, res) => {
 app.post("/api/user/success-buy", auth, async (req, res) => {
     let history = [];
     let transactionData = {};
+    const date = new Date();
+    const po = `PO-${date.getSeconds()}${date.getMilliseconds()}-${SHA1(req.user._id)
+        .toString()
+        .substring(0, 8)}`;
     // user history
     req.body.cartDetail.forEach((item) => {
         history.push({
+            poder: po,
             dateOfPurchase: Date.now(),
             name: item.name,
             brand: item.brand.name,
@@ -372,7 +385,7 @@ app.post("/api/user/success-buy", auth, async (req, res) => {
         lastname: req.user.lastname,
         email: req.user.email,
     };
-    transactionData.data = req.body.paymentData;
+    transactionData.data = { ...req.body.paymentData, porder: po };
     transactionData.product = history;
     // console.log(transactionData);
     try {
