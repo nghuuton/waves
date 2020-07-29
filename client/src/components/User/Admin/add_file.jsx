@@ -19,6 +19,13 @@ class AddFile extends Component {
         };
     }
 
+    componentDidMount() {
+        axios.get("/api/user/admin-files").then((response) => {
+            console.log(response.data);
+            this.setState({ files: response.data });
+        });
+    }
+
     onDrop(files) {
         this.setState({ uploading: true });
         let formData = new FormData();
@@ -26,7 +33,30 @@ class AddFile extends Component {
             header: { "content-type": "multipart/form-data" },
         };
         formData.append("file", files[0]);
+        axios.post("/api/user/uploadfiles", formData, config).then((response) => {
+            if (response.data.success) {
+                this.setState(
+                    { formSuccess: true, uploading: false, formError: false },
+                    () => {
+                        setTimeout(() => {
+                            this.setState({ formSuccess: false });
+                        }, 2000);
+                    }
+                );
+            }
+        });
     }
+
+    showFileList = () =>
+        this.state.files
+            ? this.state.files.map((item, i) => (
+                  <li key={i}>
+                      <Link to={`/api/user/download/${item}`} target="_black">
+                          {item}
+                      </Link>
+                  </li>
+              ))
+            : null;
 
     render() {
         return (
@@ -61,7 +91,9 @@ class AddFile extends Component {
                         )}
                     </div>
                     <hr />
-                    <div>uploads</div>
+                    <div>
+                        <ul>{this.showFileList()}</ul>
+                    </div>
                 </div>
             </UserLayout>
         );
