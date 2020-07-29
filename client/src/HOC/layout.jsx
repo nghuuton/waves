@@ -8,7 +8,6 @@ import { getSiteData } from "../actions/site_actions";
 class Layout extends Component {
     componentDidMount() {
         this.props.dispatch(getSiteData());
-        console.log(this.props.site);
     }
 
     render() {

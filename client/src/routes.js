@@ -15,6 +15,7 @@ import UserCart from "./components/User/cart";
 import UpdateProfile from "./components/User/user_profile";
 import ManageSite from "./components/User/Admin/manage_site";
 import NotFound from "./components/utils/not_found";
+import AddFile from "./components/User/Admin/add_file";
 
 const Routes = () => {
     return (
@@ -56,6 +57,7 @@ const Routes = () => {
                     component={Auth(UpdateProfile, true)}
                 />
                 <Route path="/admin/site-nfo" exact component={Auth(ManageSite, true)} />
+                <Route path="/admin/add-file" exact component={Auth(AddFile, true)} />
                 <Route component={Auth(NotFound, false)} />
             </Switch>
         </Layout>

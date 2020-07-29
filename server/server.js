@@ -6,6 +6,7 @@ const formidable = require("express-formidable");
 const cloudinary = require("cloudinary");
 const async = require("async");
 const SHA1 = require("crypto-js/sha1");
+const multer = require("multer");
 // const bcrypt = require("bcrypt");
 
 const app = express();
@@ -24,6 +25,17 @@ mongoose.connect(
         console.log("Connection Database !!!");
     }
 );
+
+let storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/");
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}_${file.originalname}`);
+    },
+});
+
+const upload = multer({ storage }).single("file");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -467,6 +479,13 @@ app.post("/api/site/site-data", auth, admin, async (req, res) => {
     } catch (error) {
         return res.status(400).json({ success: false });
     }
+});
+
+app.post("/api/user/uploadfiles", auth, admin, (req, res) => {
+    upload(req, res, (err) => {
+        if (err) return res.json({ succes: false, err });
+        return res.json({ success: true });
+    });
 });
 
 // app.post("/check", async (req, res) => {
