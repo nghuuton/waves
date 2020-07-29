@@ -401,11 +401,11 @@ app.post("/api/user/success-buy", auth, async (req, res) => {
         payment.product.forEach((item) => {
             products.push({ id: item.id, quantity: item.quantity });
         });
-        console.log(products);
+        // console.log(products);
         async.eachSeries(
             products,
             (item, callback) => {
-                Product.update(
+                Product.updateMany(
                     { _id: item.id },
                     { $inc: { sold: item.quantity } },
                     { new: false },
@@ -414,6 +414,8 @@ app.post("/api/user/success-buy", auth, async (req, res) => {
             },
             (err) => {
                 if (err) return res.json({ success: false, err });
+                // console.log(transactionData);
+                sendEmail(user.email, user.name, null, "purchase", transactionData);
                 res.status(200).json({
                     success: true,
                     cart: user.cart,
