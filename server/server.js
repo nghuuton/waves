@@ -509,6 +509,20 @@ app.get("/api/user/download/:id", auth, admin, (req, res) => {
     res.download(file);
 });
 
+app.post("/api/user/reset-user", async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.body.email });
+        if (user) {
+            user.generateResetToken((error, user) => {
+                if (error) return res.json({ success: false, error });
+                return res.json({ success: true });
+            });
+        }
+    } catch (error) {
+        return res.status(400).send(error);
+    }
+});
+
 // app.post("/check", async (req, res) => {
 //     const user = await User.findOne({
 //         email: req.body.email,
