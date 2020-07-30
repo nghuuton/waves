@@ -4,13 +4,14 @@ import axios from "axios";
 
 import FormField from "../utils/Form/formField";
 import { update, generateData, isFormValid } from "../utils/Form/formAction";
+import Dialog from "@material-ui/core/Dialog";
 
 class ResetPass extends Component {
     state = {
         resetToken: "",
         formError: false,
         formErrorMessage: "",
-        formSuccess: "",
+        formSuccess: false,
         formdata: {
             password: {
                 element: "input",
@@ -63,8 +64,22 @@ class ResetPass extends Component {
         event.preventDefault();
         let dataToSubmit = generateData(this.state.formdata, "reset_password");
         let formIsValid = isFormValid(this.state.formdata, "reset_password");
+        dataToSubmit.token = this.state.resetToken;
         if (formIsValid) {
-            console.log(dataToSubmit);
+            axios.post("/api/user/reset-password", dataToSubmit).then((response) => {
+                if (response.data.success) {
+                    this.setState({ formSuccess: true }, () =>
+                        setTimeout(() => {
+                            this.props.history.push("/register-login");
+                        }, 2000)
+                    );
+                } else {
+                    this.setState({
+                        formError: true,
+                        formErrorMessage: response.data.message,
+                    });
+                }
+            });
         } else {
             this.setState({
                 formError: true,
@@ -102,6 +117,14 @@ class ResetPass extends Component {
                         Reset password
                     </button>
                 </form>
+                <Dialog open={this.state.formSuccess}>
+                    <div className="dialog_alert">
+                        <div>Alright !!</div>
+                        <div>
+                            You will be redirected to the LOGIN in a couple seconds...
+                        </div>
+                    </div>
+                </Dialog>
             </div>
         );
     }

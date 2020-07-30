@@ -5,6 +5,8 @@ import { update, generateData, isFormValid } from "../utils/Form/formAction";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/user_actions";
 
+import MyButton from "../utils/button";
+
 class Login extends Component {
     state = {
         formError: false,
@@ -94,6 +96,12 @@ class Login extends Component {
                     ) : null}
                     <button type="submit" onClick={(event) => this.submitForm(event)}>
                         Login
+                    </button>
+                    <button
+                        style={{ marginLeft: "10px" }}
+                        onClick={() => this.props.history.push("reset-user")}
+                    >
+                        Forgot password
                     </button>
                 </form>
             </div>

@@ -528,7 +528,7 @@ app.post("/api/user/reset-user", async (req, res) => {
 app.post("/api/user/reset-password", async (req, res) => {
     try {
         var today = moment().startOf("day").valueOf();
-        const user = User.findOne({
+        const user = await User.findOne({
             resetToken: req.body.token,
             resetTokenExp: { $gte: today },
         });
