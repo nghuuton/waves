@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const moment = require("moment");
 require("dotenv").config();
 
 const userSchema = new Schema({
@@ -70,8 +71,11 @@ userSchema.pre("save", function (next) {
 userSchema.methods.generateResetToken = function (cb) {
     var user = this;
     crypto.randomBytes(20, function (err, buffer) {
+        var today = moment().startOf("day").valueOf();
+        var tomorrow = moment(today).endOf("day").valueOf();
         var token = buffer.toString("hex");
         user.resetToken = token;
+        user.resetTokenExp = tomorrow;
         user.save(function (err, user) {
             if (err) return cb(err);
             cb(null, user);

@@ -41,7 +41,12 @@ class ResetUser extends Component {
         let dataToSubmit = generateData(this.state.formdata, "reset_email");
         let formIsValid = isFormValid(this.state.formdata, "reset_email");
         if (formIsValid) {
-            console.log(dataToSubmit);
+            axios.post("/api/user/reset-user", dataToSubmit).then((response) => {
+                if (response.data.success) {
+                    this.setState({ formSucces: true });
+                } else {
+                }
+            });
         } else {
             this.setState({
                 formError: true,
