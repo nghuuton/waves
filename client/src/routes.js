@@ -17,6 +17,7 @@ import ManageSite from "./components/User/Admin/manage_site";
 import NotFound from "./components/utils/not_found";
 import AddFile from "./components/User/Admin/add_file";
 import ResetUser from "./components/Reset_user";
+import ResetPass from "./components/Reset_user/reset_pass";
 
 const Routes = () => {
     return (
@@ -38,6 +39,11 @@ const Routes = () => {
                     component={Auth(RegisterLogin, false)}
                 />
                 <Route path="/reset-user" exact component={Auth(ResetUser, false)} />
+                <Route
+                    path="/reset-password/:token"
+                    exact
+                    component={Auth(ResetPass, false)}
+                />
                 <Route
                     path="/user/dashboard"
                     exact

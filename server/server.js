@@ -7,6 +7,7 @@ const cloudinary = require("cloudinary");
 const async = require("async");
 const SHA1 = require("crypto-js/sha1");
 const multer = require("multer");
+const moment = require("moment");
 // const bcrypt = require("bcrypt");
 
 const app = express();
@@ -521,6 +522,28 @@ app.post("/api/user/reset-user", async (req, res) => {
         }
     } catch (error) {
         return res.status(400).send(error);
+    }
+});
+
+app.post("/api/user/reset-password", async (req, res) => {
+    try {
+        var today = moment().startOf("day").valueOf();
+        const user = User.findOne({
+            resetToken: req.body.token,
+            resetTokenExp: { $gte: today },
+        });
+        if (!user)
+            return res.json({
+                success: false,
+                message: "Sorry, token bad, generate a new one",
+            });
+        user.password = req.body.password;
+        user.resetToken = "";
+        user.resetTokenExp = "";
+        await user.save();
+        return res.status(200).json({ success: true });
+    } catch (error) {
+        return res.status(500).json({ success: false, error });
     }
 });
 

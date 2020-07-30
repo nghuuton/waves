@@ -4,6 +4,8 @@ import axios from "axios";
 import FormField from "../utils/Form/formField";
 import { update, generateData, isFormValid } from "../utils/Form/formAction";
 
+import Dialog from "@material-ui/core/Dialog";
+
 class ResetUser extends Component {
     state = {
         formError: false,
