@@ -26,6 +26,11 @@
         "redux-promise": "0.6.0",
         "redux-thunk": "2.3.0"
     },
+    "proxy": {
+        "/api/": {
+            "target": "http://localhost:3002"
+        }
+    },
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
