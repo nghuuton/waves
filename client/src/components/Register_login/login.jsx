@@ -5,8 +5,6 @@ import { update, generateData, isFormValid } from "../utils/Form/formAction";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/user_actions";
 
-import MyButton from "../utils/button";
-
 class Login extends Component {
     state = {
         formError: false,
@@ -53,7 +51,10 @@ class Login extends Component {
             formdata: newFormdata,
         });
     };
-
+    /**
+     *
+     * @param {event} event
+     */
     submitForm = (event) => {
         event.preventDefault();
         let dataToSubmit = generateData(this.state.formdata, "login");

@@ -1,7 +1,10 @@
 require("dotenv").config();
 
 const resetPass = (data) => {
-    const URL = process.env.NODE_ENV === "production" ? "" : "http://localhost:3000";
+    const URL =
+        process.env.NODE_ENV === "production"
+            ? "https://hidden-harbor-03050.herokuapp.com"
+            : "http://localhost:3000";
 
     return `<!DOCTYPE html>
    <html style="margin: 0; padding: 0;">
