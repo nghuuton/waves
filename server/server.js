@@ -581,15 +581,10 @@ if (process.env.NODE_ENV === "production") {
 }
 const http = require("http");
 
-const PORT = process.env.PORT || 3001;
+const port = process.env.PORT || 3001;
 
-// app.listen(PORT, () => {
-//     console.log("Sever is start on", PORT);
-// });
-
-const server = http.createServer(app);
-server.listen(PORT, () => {
-    console.log("Server is start on", PORT);
+app.listen(port, () => {
+    console.log("Sever is start on", port);
 });
 
 module.exports = app;
