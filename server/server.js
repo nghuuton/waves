@@ -579,11 +579,17 @@ if (process.env.NODE_ENV === "production") {
         res.sendFile(path.resolve(__dirname, "../client", "build", "index.html"));
     });
 }
+const http = require("http");
 
 const PORT = process.env.PORT || 3001;
 
-app.listen(PORT, () => {
-    console.log("Sever is start on", PORT);
+// app.listen(PORT, () => {
+//     console.log("Sever is start on", PORT);
+// });
+
+const server = http.createServer(app);
+server.listen(PORT, () => {
+    console.log("Server is start on", PORT);
 });
 
 module.exports = app;
