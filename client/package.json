@@ -28,7 +28,7 @@
     },
     "proxy": {
         "/api/": {
-            "target": "http://localhost:3002"
+            "target": "https://the-waves.herokuapp.com"
         }
     },
     "scripts": {
