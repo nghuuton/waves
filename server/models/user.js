@@ -93,7 +93,16 @@ userSchema.methods.comparePassword = function (candidatePassword, cb) {
 
 userSchema.methods.generateToken = async function (cb) {
     var user = this;
-    var token = jwt.sign(user._id.toHexString(), process.env.SECRET);
+    var token = jwt.sign(
+        {
+            payload: user._id.toHexString(),
+            iat: new Date().getTime(),
+        },
+        process.env.SECRET,
+        {
+            expiresIn: "1d",
+        }
+    );
     user.token = token;
     const UserToken = await user.save();
     if (UserToken) return cb(null, UserToken);
@@ -107,11 +116,11 @@ userSchema.statics.findByToken = async function (token, cb) {
         try {
             const decode = await jwt.verify(token, process.env.SECRET);
             if (!decode) return cb(null);
-            const result = await user.findOne({ _id: decode, token: token });
+            const result = await user.findOne({ _id: decode.payload, token: token });
             if (result) return cb(null, result);
             return cb(error, null);
         } catch (error) {
-            return cb(error);
+            return cb(null);
         }
     }
     // jwt.verify(token, process.env.SECRET, function (err, decode) {

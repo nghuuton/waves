@@ -52,12 +52,12 @@ const Routes = () => {
                 <Route
                     path="/admin/add-product"
                     exact
-                    component={Auth(AddProduct, true)}
+                    component={Auth(AddProduct, true, true)}
                 />
                 <Route
                     path="/admin/manage-categories"
                     exact
-                    component={Auth(ManageCategories, true)}
+                    component={Auth(ManageCategories, true, true)}
                 />
                 <Route path="/user/cart" exact component={Auth(UserCart, true)} />
                 <Route
@@ -65,8 +65,16 @@ const Routes = () => {
                     exact
                     component={Auth(UpdateProfile, true)}
                 />
-                <Route path="/admin/site-nfo" exact component={Auth(ManageSite, true)} />
-                <Route path="/admin/add-file" exact component={Auth(AddFile, true)} />
+                <Route
+                    path="/admin/site-nfo"
+                    exact
+                    component={Auth(ManageSite, true, true)}
+                />
+                <Route
+                    path="/admin/add-file"
+                    exact
+                    component={Auth(AddFile, true, true)}
+                />
                 <Route component={Auth(NotFound, false)} />
             </Switch>
         </Layout>

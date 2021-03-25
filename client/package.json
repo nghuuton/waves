@@ -6,6 +6,7 @@
         "@fortawesome/fontawesome": "1.1.8",
         "@fortawesome/fontawesome-free-solid": "5.0.13",
         "@fortawesome/react-fontawesome": "0.0.20",
+        "@ishawnwang/withunmounted": "^1.0.1",
         "@material-ui/core": "1.2.2",
         "@testing-library/jest-dom": "^4.2.4",
         "@testing-library/react": "^9.3.2",
@@ -25,11 +26,6 @@
         "redux": "4.0.0",
         "redux-promise": "0.6.0",
         "redux-thunk": "2.3.0"
-    },
-    "proxy": {
-        "/api/": {
-            "target": "https://the-waves.herokuapp.com"
-        }
     },
     "scripts": {
         "start": "react-scripts start",
